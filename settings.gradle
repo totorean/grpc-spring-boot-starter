@@ -1,3 +1,8 @@
+plugins {
+    id "com.gradle.enterprise" version "3.6"
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.2.1'
+}
+
 rootProject.name = 'grpc-spring-boot-starter'
 
 include "grpc-common-spring-boot"
@@ -23,3 +28,22 @@ include 'examples:cloud-grpc-server-consul'
 include 'examples:cloud-grpc-client-consul'
 include 'examples:cloud-grpc-server-zookeeper'
 include 'examples:cloud-grpc-client-zookeeper'
+
+gradleEnterprise {
+    server = "https://ec2-35-173-215-23.compute-1.amazonaws.com"
+    allowUntrustedServer = true
+    buildScan {
+        publishAlways()
+        captureTaskInputFiles = true
+        uploadInBackground = false
+        tag "myTag"
+    }
+    buildCache {
+        local {
+            enabled = true
+        }
+        remote(HttpBuildCache) {
+            enabled = false
+        }
+    }
+}

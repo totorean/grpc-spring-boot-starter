@@ -41,7 +41,13 @@ plugins {
     id 'com.google.protobuf' version '0.8.14'
     id 'io.franzbecker.gradle-lombok' version '4.0.0' apply false
     id 'com.github.ben-manes.versions' version '0.36.0' // gradle dependencyUpdates
-    id 'com.diffplug.spotless' version '5.9.0'
+    id 'com.diffplug.spotless' version '5.11.0'
+}
+//print out values for debug in the scan
+tasks.withType(com.diffplug.gradle.spotless.RegisterDependenciesTask).configureEach {
+    doFirst {
+        buildScan.value "steps", steps.toString()
+    }
 }
 
 // If you attempt to build without the `--scan` parameter in `gradle 6.0+` it will cause a build error that it can't find
@@ -95,8 +101,17 @@ allprojects {
         }
         format('misc') {
             target('**/*.gradle', '**/*.md', '**/*.yml')
+            targetExclude('**/build/**/*.*')
             trimTrailingWhitespace()
             endWithNewline()
+        }
+    }
+
+    normalization {
+        runtimeClasspath {
+            metaInf{
+                ignoreAttribute('Build-Time')
+            }
         }
     }
 
